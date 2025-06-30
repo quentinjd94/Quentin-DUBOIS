@@ -1,0 +1,524 @@
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quentin Dubois</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F1F5F9;
+            color: #334155;
+        }
+        .nav-link {
+            transition: color 0.3s ease, border-bottom-color 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #1E40AF;
+            border-bottom-color: #1E40AF;
+        }
+        .initiative-btn {
+            transition: all 0.3s ease;
+            border: 1px solid #CBD5E1;
+        }
+        .initiative-btn.active, .initiative-btn:hover {
+            background-color: #1E40AF;
+            color: #FFFFFF;
+            border-color: #1E40AF;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .kpi-card {
+            background-color: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        section {
+            padding-top: 7rem;
+            margin-top: -4rem;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Améliorations responsive */
+        @media (max-width: 640px) {
+            .chart-container {
+                height: 250px;
+            }
+            .initiative-btn {
+                font-size: 0.75rem;
+                padding: 0.5rem 0.75rem;
+            }
+        }
+        
+        /* Menu déroulant amélioré */
+        #mobile-menu {
+            transition: all 0.3s ease;
+        }
+        
+        #mobile-menu.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header id="home" class="bg-stone-100/80 backdrop-blur-sm fixed top-0 left-0 right-0 z-50 shadow-sm">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center">
+                    <h1 class="text-2xl font-bold text-stone-800">Quentin Dubois</h1>
+                    <span class="hidden sm:inline-block ml-4 text-lg font-light text-stone-600"></span>
+                </div>
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#overview" class="nav-link text-sm font-medium text-stone-600 pb-1">Synthèse</a>
+                    <a href="#initiatives" class="nav-link text-sm font-medium text-stone-600 pb-1">Portefeuille d'initiatives</a>
+                    <a href="#competencies" class="nav-link text-sm font-medium text-stone-600 pb-1">Compétences</a>
+                    <a href="#career" class="nav-link text-sm font-medium text-stone-600 pb-1">Parcours</a>
+                </nav>
+                <div class="md:hidden">
+                    <button id="menu-btn" class="text-stone-700 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden pb-4">
+                <a href="#overview" class="block py-2 px-4 text-sm text-stone-600 hover:bg-stone-200 rounded">Synthèse</a>
+                <a href="#initiatives" class="block py-2 px-4 text-sm text-stone-600 hover:bg-stone-200 rounded">Portefeuille d'initiatives</a>
+                <a href="#competencies" class="block py-2 px-4 text-sm text-stone-600 hover:bg-stone-200 rounded">Compétences</a>
+                <a href="#career" class="block py-2 px-4 text-sm text-stone-600 hover:bg-stone-200 rounded">Parcours</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 pt-28">
+
+        <!-- Section Hero avec photo -->
+        <div class="text-center mb-16">
+            <div class="mb-6">
+                <img src="https://i.ibb.co/q3Ls4x8b/Image-2.jpg" 
+                     alt="Quentin Dubois" 
+                     class="w-32 h-32 sm:w-40 sm:h-40 rounded-full mx-auto object-cover border-4 border-blue-200 shadow-lg">
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight mb-4">
+                Architecte de la Croissance Opérationnelle
+            </h2>
+            <p class="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto px-4">
+                Transformer le potentiel commercial en résultats mesurables grâce à une stratégie rigoureuse et un leadership affirmé.
+            </p>
+        </div>
+
+        <section id="overview">
+            <div class="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-200 mb-12">
+                 <h3 class="text-xl font-semibold text-slate-800 mb-2">Mission Exécutive</h3>
+                 <p class="text-slate-600 text-sm sm:text-base">
+                    Piloter des stratégies opérationnelles pour générer une croissance évolutive, une performance financière accrue et un leadership de marché. J'exploite plus de 5 ans d'expérience internationale dans des environnements dynamiques et à enjeux élevés pour construire des chaînes d'approvisionnement résilientes, responsabiliser des équipes performantes et maximiser la rentabilité.
+                </p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                 <div class="kpi-card">
+                    <h4 class="font-bold text-blue-700 text-2xl sm:text-3xl">>$1.2M</h4>
+                    <p class="font-semibold text-slate-800 mt-2 text-sm sm:text-base">Revenu Annuel Atteint</p>
+                    <p class="text-xs sm:text-sm text-slate-500">en 2 ans pour un lancement en pleine pandémie (Gustave Restaurant).</p>
+                </div>
+                 <div class="kpi-card">
+                    <h4 class="font-bold text-blue-700 text-2xl sm:text-3xl">+113%</h4>
+                    <p class="font-semibold text-slate-800 mt-2 text-sm sm:text-base">Croissance du Chiffre d'Affaires</p>
+                    <p class="text-xs sm:text-sm text-slate-500">en moins d'un an après acquisition (Koro Koro, de 220k$ à 470k$).</p>
+                </div>
+                 <div class="kpi-card">
+                    <h4 class="font-bold text-blue-700 text-2xl sm:text-3xl">>€17M</h4>
+                    <p class="font-semibold text-slate-800 mt-2 text-sm sm:text-base">Volume de Transactions</p>
+                    <p class="text-xs sm:text-sm text-slate-500">géré dans un portefeuille client immobilier.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="initiatives">
+            <div class="text-center mb-8 sm:mb-12">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">Portefeuille d'Initiatives Stratégiques</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-sm sm:text-lg text-slate-600 px-4">
+                    Sélectionnez une initiative pour explorer les objectifs, les résultats et l'impact financier visualisé.
+                </p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mb-6 sm:mb-8 px-2">
+                <button class="initiative-btn active text-xs sm:text-sm font-semibold py-2 px-3 sm:px-5 rounded-full" data-initiative="koro">Redressement & Cession (Koro Koro)</button>
+                <button class="initiative-btn text-xs sm:text-sm font-semibold py-2 px-3 sm:px-5 rounded-full" data-initiative="gustave">Lancement & Scalabilité (Gustave)</button>
+                <button class="initiative-btn text-xs sm:text-sm font-semibold py-2 px-3 sm:px-5 rounded-full" data-initiative="home">Expansion Marché (Home Spirit)</button>
+                <button class="initiative-btn text-xs sm:text-sm font-semibold py-2 px-3 sm:px-5 rounded-full" data-initiative="audi">Performance Commerciale (Audi)</button>
+            </div>
+
+            <div class="bg-white p-4 sm:p-6 md:p-8 rounded-xl shadow-sm border border-slate-200">
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8">
+                    <div class="lg:col-span-2">
+                        <h3 id="initiative-title" class="text-xl sm:text-2xl font-bold text-slate-800 mb-3"></h3>
+                        <p id="initiative-objective" class="text-slate-600 mb-4 sm:mb-6 text-sm sm:text-base"></p>
+                        <h4 class="text-base sm:text-lg font-semibold text-slate-800 mb-3">Indicateurs Clés & Résultats</h4>
+                        <ul id="initiative-outcomes" class="space-y-2 sm:space-y-3 text-slate-600 list-inside text-sm sm:text-base">
+                        </ul>
+                    </div>
+                    <div class="lg:col-span-3 flex flex-col items-center justify-center">
+                        <div class="chart-container">
+                            <canvas id="initiative-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="competencies">
+            <div class="text-center mb-8 sm:mb-12">
+                <h2 class="text-2xl sm:text-3xl font-bold text-slate-800">Piliers Stratégiques & Compétences Clés</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-sm sm:text-lg text-slate-600 px-4">Une approche opérationnelle fondée sur quatre piliers interconnectés.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                <div class="bg-white p-4 sm:p-6 rounded-lg border border-slate-200">
+                    <h3 class="text-base sm:text-lg font-bold text-blue-800 mb-3">1. Excellence Opérationnelle</h3>
+                    <ul class="space-y-1 sm:space-y-2 text-xs sm:text-sm text-slate-600">
+                        <li>• Optimisation Logistique & Supply Chain</li>
+                        <li>• Réingénierie des Processus & Contrôle Qualité</li>
+                        <li>• Gestion de Projet & Exécution</li>
+                        <li>• Management d'Opérations Multi-Sites</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-4 sm:p-6 rounded-lg border border-slate-200">
+                    <h3 class="text-base sm:text-lg font-bold text-blue-800 mb-3">2. Croissance Évolutive</h3>
+                    <ul class="space-y-1 sm:space-y-2 text-xs sm:text-sm text-slate-600">
+                        <li>• Développement de Nouveaux Marchés</li>
+                        <li>• Stratégie Go-to-Market</li>
+                        <li>• Partenariats Stratégiques & Négociation</li>
+                        <li>• Transformation Digitale & E-commerce</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-4 sm:p-6 rounded-lg border border-slate-200">
+                    <h3 class="text-base sm:text-lg font-bold text-blue-800 mb-3">3. Performance Financière</h3>
+                    <ul class="space-y-1 sm:space-y-2 text-xs sm:text-sm text-slate-600">
+                        <li>• Gestion P&L & Croissance des Revenus</li>
+                        <li>• Réduction des Coûts & Analyse ROI</li>
+                        <li>• Structuration Financière & Prévisions</li>
+                        <li>• Gestion des Objectifs de Vente & KPI</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-4 sm:p-6 rounded-lg border border-slate-200">
+                    <h3 class="text-base sm:text-lg font-bold text-blue-800 mb-3">4. Leadership & Culture</h3>
+                    <ul class="space-y-1 sm:space-y-2 text-xs sm:text-sm text-slate-600">
+                        <li>• Direction d'Équipes Transfonctionnelles</li>
+                        <li>• Développement des Talents & Mentorat</li>
+                        <li>• Conduite du Changement</li>
+                        <li>• Intégration en Environnement Multiculturel</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section id="career">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-800">Parcours & Formation</h2>
+                <p class="mt-3 max-w-2xl mx-auto text-lg text-slate-600">Une expérience fondamentale qui a forgé une vision stratégique et commerciale.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                      <h3 class="text-xl font-semibold text-slate-800 border-b-2 border-blue-600 pb-2 mb-4">Expériences Fondamentales</h3>
+                      <div class="relative pl-6 after:absolute after:top-2 after:bottom-0 after:left-1.5 after:w-0.5 after:bg-slate-300">
+                          <div class="relative mb-6">
+                               <div class="absolute top-2 left-[-34px] w-6 h-6 bg-blue-600 rounded-full border-4 border-slate-100"></div>
+                               <p class="font-semibold text-slate-700">Agent Immobilier</p>
+                               <p class="text-sm text-slate-600">5ème Avenue/Agence du Tremblay | 2017 - 2020</p>
+                               <p class="text-sm text-slate-500 mt-1">Gestion d'un portefeuille de transactions de plus de 17M€, spécialisé en montage financier et négociation stratégique.</p>
+                          </div>
+                           <div class="relative">
+                               <div class="absolute top-2 left-[-34px] w-6 h-6 bg-blue-600 rounded-full border-4 border-slate-100"></div>
+                             <p class="font-semibold text-slate-700">Conseiller Commercial VN/VO</p>
+                             <p class="text-sm text-slate-600">Audi Saint-Maur | 2015 - 2017</p>
+                             <p class="text-sm text-slate-500 mt-1">Dépassement constant des objectifs de vente et amélioration drastique du taux de financement client de 35% à 60%.</p>
+                        </div>
+                    </div>
+                </div>
+                 <div>
+                    <h3 class="text-xl font-semibold text-slate-800 border-b-2 border-blue-600 pb-2 mb-4">Formation</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="font-semibold text-slate-700">CQP Vendeur Automobiles</p>
+                            <p class="text-sm text-slate-500">Volkswagen Academy | 2016</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-slate-700">Bachelor Technicien du son</p>
+                            <p class="text-sm text-slate-500">CFPM | 2014</p>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-slate-700">Baccalauréat ES</p>
+                            <p class="text-sm text-slate-500">Lycée Christophe Colomb | 2012</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-20 border-t border-slate-200">
+        <div class="container mx-auto py-6 px-4 sm:px-6 lg:px-8 text-center text-slate-500">
+            <p>&copy; 2025 Quentin Dubois. Ce profil interactif a été généré pour illustrer mes compétences en leadership opérationnel.</p>
+             <p class="text-xs mt-2">
+                <a href="mailto:quentinjdubois@gmail.com" class="hover:text-blue-700">quentinjdubois@gmail.com</a> |
+                <a href="https://www.linkedin.com/in/qdubois" target="_blank" class="hover:text-blue-700">linkedin.com/in/qdubois</a> |
+                +33 6 81 62 86 83
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        const initiativesData = {
+            koro: {
+                title: "Redressement d'Actif & Cession Stratégique",
+                objective: "Acquérir, restructurer et faire évoluer un actif de restauration mono-produit en une entreprise multicanal rentable, prête pour une vente réussie.",
+                outcomes: [
+                    "<li><strong>Croissance du CA :</strong> Doublement du revenu annuel de 220k$ à 470k$ en moins d'un an.</li>",
+                    "<li><strong>Expansion des Services :</strong> Lancement d'une offre traiteur générant +110k$ de revenus additionnels.</li>",
+                    "<li><strong>Transformation Digitale :</strong> Capture de +140k$ de ventes en ligne via une nouvelle stratégie digitale.</li>",
+                    "<li><strong>Retour sur Investissement :</strong> Cession réussie de l'entreprise avec un ROI significatif.</li>"
+                ],
+                chart: {
+                    type: 'bar',
+                    labels: ['CA Initial', 'CA Final', 'Revenus Traiteur', 'Revenus en Ligne'],
+                    data: [220, 470, 110, 140],
+                    title: "Croissance du Chiffre d'Affaires (Koro Koro, en k$)",
+                    backgroundColor: ['#3B82F6', '#1D4ED8', '#1E40AF', '#1E3A8A'],
+                    borderColor: ['#1D4ED8', '#1E40AF', '#1E3A8A', '#172554']
+                }
+            },
+            gustave: {
+                title: "Lancement & Scalabilité en Milieu Concurrentiel",
+                objective: "Créer, lancer et gérer un nouveau concept de restauration haut de gamme pendant la pandémie de COVID-19, pour l'établir comme un leader du marché.",
+                outcomes: [
+                    "<li><strong>Performance Financière :</strong> Croissance de 0 à 1,2M$ de CA annuel en 2 ans.</li>",
+                    "<li><strong>Revenu Hebdomadaire :</strong> Maintien d'une moyenne de 25k$ de revenu par semaine.</li>",
+                    "<li><strong>Leadership d'Équipe :</strong> Management d'une équipe de 15 personnes, atteignant une note client de 4.6/5.</li>",
+                    "<li><strong>Reconnaissance du Marché :</strong> Obtention des titres 'Top 5 Meilleurs Restaurants Français' et 'Meilleur Brunch de Miami'.</li>"
+                ],
+                chart: {
+                    type: 'line',
+                    labels: ['Lancement (An 0)', 'An 1', 'An 2'],
+                    data: [0, 900, 1200],
+                    title: "Scalabilité du Chiffre d'Affaires (Gustave, en k$)",
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                    borderColor: '#1E40AF'
+                }
+            },
+            home: {
+                title: "Expansion Stratégique sur un Nouveau Marché",
+                objective: "Établir et étendre l'empreinte de l'entreprise sur un marché stratégique clé (Nord-Est des États-Unis) grâce à une stratégie commerciale ciblée et la création d'un réseau logistique hyper-efficace.",
+                outcomes: [
+                    "<li><strong>Pénétration de Marché :</strong> Déploiement d'une stratégie de cartographie data-driven pour acquérir de nouveaux comptes retail majeurs.</li>",
+                    "<li><strong>Architecture Logistique :</strong> Conception et mise en œuvre d'une chaîne logistique complète (stockage, exposition, expédition).</li>",
+                    "<li><strong>Réduction des Coûts :</strong> Optimisation des opérations pour une réduction significative des coûts et des délais.</li>",
+                    "<li><strong>Alignement Transfonctionnel :</strong> Rôle de pivot entre le marketing, les ventes et la supply chain pour maximiser la satisfaction client.</li>"
+                ],
+                chart: {
+                    type: 'doughnut',
+                    labels: ['Développement Commercial', 'Architecture Logistique', 'Alignement Stratégique', 'Optimisation des Coûts'],
+                    data: [40, 30, 20, 10],
+                    title: "Focus des Activités (Home Spirit USA, en %)",
+                    backgroundColor: ['#3B82F6', '#1D4ED8', '#1E40AF', '#1E3A8A'],
+                    borderColor: '#FFFFFF'
+                }
+            },
+            audi: {
+                title: "Optimisation de la Performance Commerciale",
+                objective: "Déployer une stratégie commerciale axée sur les résultats pour dépasser les objectifs annuels et améliorer la rentabilité globale des transactions.",
+                outcomes: [
+                    "<li><strong>Dépassement des Objectifs :</strong> Vente de 117 véhicules contre un objectif de 115 (Année 2).</li>",
+                    "<li><strong>Amélioration Rentabilité :</strong> Augmentation du taux de financement client de 35% à 60%.</li>",
+                    "<li><strong>Gestion Proactive :</strong> Assurer une rotation efficace des stocks et une satisfaction client élevée.</li>"
+                ],
+                chart: {
+                    type: 'bar',
+                    labels: ['Objectif Année 1', 'Vendus Année 1', 'Objectif Année 2', 'Vendus Année 2'],
+                    data: [95, 102, 115, 117],
+                    title: "Performance Commerciale vs Objectifs (Audi, unités)",
+                    backgroundColor: ['#CBD5E1', '#1E40AF', '#CBD5E1', '#1E40AF'],
+                    borderColor: ['#94A3B8', '#64748B', '#94A3B8', '#64748B']
+                }
+            }
+        };
+
+        let currentChart = null;
+
+        const titleEl = document.getElementById('initiative-title');
+        const objectiveEl = document.getElementById('initiative-objective');
+        const outcomesEl = document.getElementById('initiative-outcomes');
+        const chartCanvas = document.getElementById('initiative-chart');
+        const initiativeBtns = document.querySelectorAll('.initiative-btn');
+
+        function updateInitiativeContent(initiativeKey) {
+            const data = initiativesData[initiativeKey];
+
+            titleEl.textContent = data.title;
+            objectiveEl.textContent = data.objective;
+            outcomesEl.innerHTML = data.outcomes.join('');
+
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            const ctx = chartCanvas.getContext('2d');
+            currentChart = new Chart(ctx, {
+                type: data.chart.type,
+                data: {
+                    labels: data.chart.labels,
+                    datasets: [{
+                        label: data.chart.title,
+                        data: data.chart.data,
+                        backgroundColor: data.chart.backgroundColor,
+                        borderColor: data.chart.borderColor,
+                        borderWidth: data.chart.type === 'line' ? 2 : 1,
+                        fill: data.chart.type === 'line' ? true : false,
+                        pointBackgroundColor: '#1E40AF',
+                        pointHoverRadius: 7,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: data.chart.type === 'doughnut',
+                            position: 'bottom',
+                        },
+                        title: {
+                            display: true,
+                            text: data.chart.title,
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            color: '#334155'
+                        }
+                    },
+                    scales: (data.chart.type === 'bar' || data.chart.type === 'line') ? {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#E2E8F0'
+                            }
+                        },
+                        x: {
+                           grid: {
+                                display: false
+                           }
+                        }
+                    } : {}
+                }
+            });
+
+            initiativeBtns.forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.dataset.initiative === initiativeKey) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        initiativeBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                updateInitiativeContent(btn.dataset.initiative);
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateInitiativeContent('koro');
+        });
+
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('show');
+            } else {
+                mobileMenu.classList.remove('show');
+            }
+        });
+
+        // Fermer le menu lors du clic sur un lien
+        const mobileNavLinks = document.querySelectorAll('#mobile-menu a');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('show');
+            });
+        });
+
+        // Fermer le menu si on clique en dehors
+        document.addEventListener('click', (e) => {
+            if (!menuBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('show');
+            }
+        });
+
+        const navLinks = document.querySelectorAll('#mobile-menu a');
+        const sections = document.querySelectorAll('section');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (pageYOffset >= sectionTop - 150) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').includes(current)) {
+                    link.classList.add('active');
+                    link.style.backgroundColor = '#E2E8F0';
+                } else {
+                    link.style.backgroundColor = 'transparent';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
